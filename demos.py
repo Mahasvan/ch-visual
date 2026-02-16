@@ -111,3 +111,33 @@ def demo_stations_hull_by_state(client):
     )
     fig.tight_layout()
     plt.show()
+
+
+def demo_agg_hulls_by_state(client):
+    """Plot per-state convex hulls from the pre-aggregated AggregatingMergeTree table."""
+    lons, lats = db.fetch_station_points(client)
+
+    start = time.perf_counter()
+    agg_hulls = db.agg_hulls_by_state(client, limit=100)
+    elapsed = time.perf_counter() - start
+
+    print(f"  {len(agg_hulls)} states from AggregatingMergeTree ({elapsed:.3f}s)")
+
+    fig, ax = plots.world_map()
+    proj = ccrs.PlateCarree()
+    ax.scatter(lons, lats, s=1, c="black", alpha=0.2, transform=proj, zorder=5)
+
+    for i, (state, n, hull) in enumerate(agg_hulls):
+        c = plots.STATE_COLORS[i % len(plots.STATE_COLORS)]
+        plots.outline_polygon(ax, hull, transform=proj, color=c, lw=1.5,
+                              label=f"{state} ({n})")
+        plots.fill_polygon(ax, hull, transform=proj, alpha=0.2, fc=c)
+
+    ax.legend(loc="lower left", fontsize=7, ncol=4)
+    ax.set_title(
+        f"GHCND Stations — AggregatingMergeTree groupConvexHullMerge by State "
+        f"({len(agg_hulls)} states, {elapsed:.3f}s)",
+        fontsize=14,
+    )
+    fig.tight_layout()
+    plt.show()

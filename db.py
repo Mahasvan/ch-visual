@@ -98,3 +98,19 @@ def station_hulls_by_state(client):
         GROUP BY state ORDER BY state
     """).result_rows
     return [(r[0], wkt.loads(r[1])) for r in rows]
+
+
+# ------------------------------------------------------------------
+# AggregatingMergeTree queries  (state_geo_agg)
+# ------------------------------------------------------------------
+
+def agg_hulls_by_state(client, limit=10):
+    """Return list of (state, count, shapely_geom) from pre-aggregated table."""
+    rows = client.query(f"""
+        SELECT state, countMerge(station_count) AS n,
+               wkt(groupConvexHullMerge(station_hull)) AS hull
+        FROM state_geo_agg
+        GROUP BY state ORDER BY n DESC
+        LIMIT {limit}
+    """).result_rows
+    return [(r[0], r[1], wkt.loads(r[2])) for r in rows]

@@ -9,6 +9,7 @@ DEMOS = [
     ("groupConvexHull (LineStrings)",  demos.demo_convex_hull_linestrings),
     ("Station Convex Hull",           demos.demo_stations_hull),
     ("Station Hulls by State",        demos.demo_stations_hull_by_state),
+    ("AggregatingMergeTree Hulls",    demos.demo_agg_hulls_by_state),
 ]
 
 if __name__ == "__main__":
