@@ -11,8 +11,8 @@ Uses the [ClickHouse blogpost](https://clickhouse.com/blog/real-world-data-noaa-
   - You can also change the setup sql script to use the S3 URL, instead of the localhost fileserver.
 
 ### Clickhouse Server
-- Make sure `clickhouse-server` is running, compiled from source, that has the `groupPolygonUnion`, `groupPolygonIntersection`, and `groupConvexHull` aggregate functions present,
-- run the `setup.sql` script 
+- Make sure `clickhouse-server` is running, compiled from source, that has the `groupPolygonUnion`, `groupPolygonIntersection`, and `groupConvexHull` aggregate functions present
+- Run the `setup.sql` script (creates base tables + `state_geo_agg` AggregatingMergeTree with materialized view)
 
 ### Python stuff
 - make a venv in the current directory using `python3 -m venv .venv` (optional)
@@ -25,11 +25,13 @@ Uses the [ClickHouse blogpost](https://clickhouse.com/blog/real-world-data-noaa-
 - `python main.py`
 - close each visualization window to move to the next visualization
 
-The time taken for clickhouse to calculate the convex hulls for the NOAA dataset is present in the title of their respective visualizations.
+The time taken for ClickHouse to calculate the convex hulls for the NOAA dataset is present in the title of their respective visualizations.
+
+The 7th plot reads from a pre-aggregated `AggregatingMergeTree` table (`state_geo_agg`) using `groupConvexHullMerge`, demonstrating incremental aggregation with materialized views.
 
 
 ## Performance
 
-| Machine | Global groupConvexHull | groupConvexHull grouped by state |
-|---------|------------------------|----------------------------------|
-| M3 Pro  | 1                      | 2                                |
+| Machine | Global groupConvexHull | groupConvexHull grouped by state | AggregatingMergeTree Merge |
+|---------|------------------------|----------------------------------|----------------------------|
+| M3 Pro  | 1                      | 2                                |                            |
