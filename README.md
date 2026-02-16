@@ -1,5 +1,6 @@
 # ch-visual
-Visualization for Geo-type aggregate functions in ClickHouse
+Visualization for Geo-type aggregate functions in ClickHouse.
+Uses the [ClickHouse blogpost](https://clickhouse.com/blog/real-world-data-noaa-climate-data) that uses the NOAA dataset, as reference.
 
 ## Setup Instructions
 
