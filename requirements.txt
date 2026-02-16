@@ -1,0 +1,4 @@
+clickhouse-connect>=0.7.0
+shapely>=2.0.0
+matplotlib>=3.5.0
+cartopy>=0.21.0
