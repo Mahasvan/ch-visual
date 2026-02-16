@@ -8,6 +8,8 @@ Two-table schema for NOAA Global Historical Climatology Network data:
 |-------|---------|
 | `noaa_weather` | Daily weather measurements (2022) |
 | `ghcnd_stations` | Station metadata with auto-computed `Point` geo column |
+| `state_geo_agg` | Pre-aggregated per-state convex hulls (`AggregatingMergeTree`) |
+| `state_geo_mv` | Materialized view that auto-updates `state_geo_agg` on insert |
 
 The `location` column on `ghcnd_stations` is defined as
 `MATERIALIZED CAST((longitude, latitude), 'Point')` — it is computed
@@ -37,7 +39,9 @@ This will:
 1. Drop existing tables (safe to re-run)
 2. Create `noaa_weather` and insert 2022 data (~22M rows)
 3. Create `ghcnd_stations` and insert station metadata (~130k rows)
-4. Print row counts and a sample for verification
+4. Create `state_geo_agg` (AggregatingMergeTree) + `state_geo_mv` (materialized view)
+5. Backfill per-state aggregates from existing station data
+6. Print row counts and a sample for verification
 
 ---
 
@@ -82,7 +86,7 @@ WHERE id LIKE 'US%';
 python main.py
 ```
 
-This produces six plots:
+This produces seven plots:
 
 1. **groupPolygonUnion** — union of two overlapping squares
 2. **groupPolygonIntersection** — intersection of two overlapping squares
@@ -90,6 +94,7 @@ This produces six plots:
 4. **groupConvexHull (LineStrings)** — convex hull of four line segments
 5. **Station Convex Hull** — US stations on a world map with overall hull (includes query time)
 6. **Station Hulls by State** — per-state convex hulls with 10 randomized colours (includes query time)
+7. **AggregatingMergeTree Hulls** — per-state hulls read from pre-aggregated `state_geo_agg` via `groupConvexHullMerge`, with per-state legend
 
 Station demos filter to US-only stations (`id LIKE 'US%'`) and display
 ClickHouse query time in the plot title.
@@ -147,3 +152,19 @@ ORDER BY id;
 
 The `MATERIALIZED` keyword means ClickHouse computes `location`
 automatically whenever a row is inserted — no manual population needed.
+
+### `state_geo_agg` (AggregatingMergeTree)
+
+```sql
+CREATE TABLE state_geo_agg (
+    state         String,
+    station_count AggregateFunction(count, UInt32),
+    station_hull  AggregateFunction(groupConvexHull, Point)
+) ENGINE = AggregatingMergeTree()
+ORDER BY state;
+```
+
+A materialized view (`state_geo_mv`) auto-populates this table on
+every insert into `ghcnd_stations`, storing intermediate aggregate
+states that are finalized at query time with `-Merge` combinators
+(e.g. `countMerge`, `groupConvexHullMerge`).
