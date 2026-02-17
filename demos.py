@@ -111,3 +111,34 @@ def demo_stations_hull_by_state(client):
     )
     fig.tight_layout()
     plt.show()
+
+
+def demo_stations_hull_by_country(client):
+    lons, lats = db.fetch_station_points(client, where="1=1")  # All stations
+    
+    start = time.perf_counter()
+    country_hulls = db.station_hulls_by_country(client)
+    elapsed = time.perf_counter() - start
+    
+    print(f"  {len(lons)} stations, {len(country_hulls)} country hulls")
+    print(f"  Computed in {elapsed:.3f}s")
+
+    fig, ax = plots.world_map()
+    proj = ccrs.PlateCarree()
+    ax.scatter(lons, lats, s=1, c="black", alpha=0.15, transform=proj, zorder=5)
+
+    # Randomize color assignment for each country
+    color_assignment = {i: random.choice(plots.STATE_COLORS) for i in range(len(country_hulls))}
+
+    for i, (_, hull) in enumerate(country_hulls):
+        c = color_assignment[i]
+        plots.outline_polygon(ax, hull, transform=proj, color=c, lw=1.5)
+        plots.fill_polygon(ax, hull, transform=proj, alpha=0.2, fc=c)
+
+    plots.state_legend(ax, len(lons))
+    ax.set_title(
+        f"GHCND Stations — groupConvexHull by Country ({len(country_hulls)} countries, {elapsed:.3f}s)",
+        fontsize=14,
+    )
+    fig.tight_layout()
+    plt.show()

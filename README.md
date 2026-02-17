@@ -30,6 +30,7 @@ The time taken for clickhouse to calculate the convex hulls for the NOAA dataset
 
 ## Performance
 
-| Machine | Global groupConvexHull | groupConvexHull grouped by state |
+|  | M3 Pro MBP | Some Other Machine |
 |---------|------------------------|----------------------------------|
-| M3 Pro  | 1                      | 2                                |
+| Global groupConvexHull  | 1 ms                     | 2 ms                                |
+| groupConvexHull GROUP BY state  | 1  ms                     | 2 ms                               |

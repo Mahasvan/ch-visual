@@ -98,3 +98,12 @@ def station_hulls_by_state(client):
         GROUP BY state ORDER BY state
     """).result_rows
     return [(r[0], wkt.loads(r[1])) for r in rows]
+
+def station_hulls_by_country(client):
+    """Return list of (country, shapely_geom) for per-country convex hulls."""
+    rows = client.query(f"""
+        SELECT substring(id, 1, 2) AS country, wkt(groupConvexHull(location))
+        FROM ghcnd_stations
+        GROUP BY substring(id, 1, 2) 
+    """).result_rows
+    return [(r[0], wkt.loads(r[1])) for r in rows]

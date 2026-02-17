@@ -9,6 +9,7 @@ DEMOS = [
     ("groupConvexHull (LineStrings)",  demos.demo_convex_hull_linestrings),
     ("Station Convex Hull",           demos.demo_stations_hull),
     ("Station Hulls by State",        demos.demo_stations_hull_by_state),
+    ("Station Hulls by Country",      demos.demo_stations_hull_by_country),
 ]
 
 if __name__ == "__main__":
