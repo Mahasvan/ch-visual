@@ -36,8 +36,8 @@ ClickHouse was compiled and run on the following machines, and tested for query 
   - 8GB DDR4 RAM, 5400 RPM HDD
   - Ubuntu Server 24.04.3 LTS
 
-| Query                             | Vertices,Hulls | MacBook | IdeaPad |
-|-----------------------------------|----------------|---------|---------|
-| groupConvexHull, global           | 75846, 1       | 69 ms   | 158 ms  |
-| groupConvexHull, GROUP BY state   | 75846, 52      | 61 ms   | 130 ms  |
-| groupConvexHull, GROUP BY country | 129657, 219    | 91 ms   | 246 ms  |
+| Query                                              | Vertices,Hulls | MacBook | IdeaPad |
+|----------------------------------------------------|----------------|---------|---------|
+| groupConvexHull, global                            | 75846, 1       | 69 ms   | 158 ms  |
+| groupConvexHull, FILTER US States, GROUP BY state, | 75846, 52      | 61 ms   | 130 ms  |
+| groupConvexHull, GROUP BY country                  | 129657, 219    | 91 ms   | 246 ms  |
