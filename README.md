@@ -4,14 +4,9 @@ Uses the [ClickHouse blogpost](https://clickhouse.com/blog/real-world-data-noaa-
 
 ## Setup Instructions
 
-### Fileserver
-- Make sure you have a HTTP file server running on `localhost:8000`
-  - Make sure `2022.csv.gz` and `ghcnd-stations.txt` are present in the root.
-  - In the folder you have those two files downloaded, run `python3 -m http.server`
-  - You can also change the setup sql script to use the S3 URL, instead of the localhost fileserver.
-
 ### Clickhouse Server
 - Make sure `clickhouse-server` is running, compiled from source, that has the `groupPolygonUnion`, `groupPolygonIntersection`, and `groupConvexHull` aggregate functions present,
+- Make sure you have a stable internet connection
 - run the `setup.sql` script 
 
 ### Python stuff
