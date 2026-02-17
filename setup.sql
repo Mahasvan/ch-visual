@@ -42,7 +42,7 @@ SELECT
     nullIf(sFlag, ''),
     nullIf(obsTime, '')
 FROM url(
-    'http://127.0.0.1:8000/2022.csv.gz',
+    'http://noaa-ghcn-pds.s3.amazonaws.com/csv.gz/2022.csv.gz',
     'CSV',
     'station_id String, date String, measurement String, value Int64,
      mFlag String, qFlag String, sFlag String, obsTime String'
@@ -79,7 +79,7 @@ SELECT
     nullIf(trim(substring(line, 77, 3)), '')    AS hcn_crn_flag,
     nullIf(trim(substring(line, 81, 5)), '')    AS wmo_id
 FROM url(
-    'http://127.0.0.1:8000/ghcnd-stations.txt',
+    'http://noaa-ghcn-pds.s3.amazonaws.com/ghcnd-stations.txt',
     'LineAsString',
     'line String'
 );
