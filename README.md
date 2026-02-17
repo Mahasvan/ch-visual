@@ -25,7 +25,13 @@ The time taken for clickhouse to calculate the convex hulls for the NOAA dataset
 
 ## Performance
 
-|  | M3 Pro MBP | Some Other Machine |
-|---------|------------------------|----------------------------------|
-| Global groupConvexHull  | 1 ms                     | 2 ms                                |
-| groupConvexHull GROUP BY state  | 1  ms                     | 2 ms                               |
+ClickHouse was compiled and run on the following machines, and tested for query performance.
+
+- MacBook Pro (16", Nov 2023) - M3 Pro, 18 GB Unified Memory - macOS Tahoe 26.3
+- Lenovo IdeaPad - Intel Core i5 7200U (2C4T), 8GB DDR4 RAM, 5400 RPM HDD - Ubuntu Server 24.04.3 LTS
+
+| Query                                         | M3 Pro MBP | Lenovo IdeaPad |
+|-----------------------------------------------|------------|----------------|
+| Global groupConvexHull                        | 69 ms      | 158 ms         |
+| groupConvexHull GROUP BY state (52 groups)    | 61 ms      | 130 ms         |
+| groupConvexHull GROUP BY country (219 groups) | 91 ms      | 246 ms         |
